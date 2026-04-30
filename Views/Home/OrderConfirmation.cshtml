@@ -1,0 +1,6 @@
+@{
+    ViewData["Title"] = "Order Confirmation";
+    ViewData["ActivePage"] = "";
+    var total = TempData["OrderTotal"]?.ToString() ?? "0.00";
+    var items = TempData["OrderItems"]?.ToString() ?? "0";
+}

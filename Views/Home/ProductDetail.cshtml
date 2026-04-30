@@ -1,0 +1,7 @@
+@model RecommendationApp.Models.ProductViewModel
+@using RecommendationApp.Services
+@{
+    ViewData["Title"] = $"Product #{Model.Product.ProductId}";
+    ViewData["ActivePage"] = "Products";
+    var color = Model.CategoryColor;
+}

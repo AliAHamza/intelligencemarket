@@ -1,0 +1,6 @@
+@model List<RecommendationApp.Models.CartItem>
+@{
+    ViewData["Title"] = "Shopping Cart";
+    ViewData["ActivePage"] = "Cart";
+    var total = Model.Sum(c => c.Price * c.Quantity);
+}

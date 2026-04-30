@@ -1,0 +1,9 @@
+@model List<RecommendationApp.Models.Product>
+@using RecommendationApp.Services
+@{
+    ViewData["Title"] = "Browse Products";
+    ViewData["ActivePage"] = "Products";
+    var categories = ViewBag.Categories as List<string?> ?? new List<string?>();
+    var selectedCat = ViewBag.SelectedCategory as string;
+}
+
