@@ -1,6 +1,191 @@
+﻿@{
+    ViewData["Title"] = "Order Confirmation";
+    ViewData["ActivePage"] = "";
+    var total = TempData["OrderTotal"]?.ToString() ?? "0.00";
+    var items = TempData["OrderItems"]?.ToString() ?? "0";
+}
 @{
     ViewData["Title"] = "Order Confirmation";
     ViewData["ActivePage"] = "";
     var total = TempData["OrderTotal"]?.ToString() ?? "0.00";
     var items = TempData["OrderItems"]?.ToString() ?? "0";
 }
+
+@section Styles {
+    <style>
+        .confirm-container {
+            max-width: 550px;
+            margin: 4rem auto;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981, #059669);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 2rem;
+            animation: popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+            box-shadow: 0 0 60px rgba(16,185,129,0.4);
+        }
+
+        @@keyframes popIn {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .confirm-card {
+            background: var(--surface);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 24px;
+            padding: 2.5rem;
+            animation: slideUp 0.6s ease 0.2s both;
+        }
+
+        @@keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .order-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.9rem;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+}
+
+<canvas class="confetti" id="confetti"></canvas>
+
+<div class="confirm-container">
+    <div class="success-icon">✓</div>
+
+    <div class="confirm-card">
+        <h1 style="font-size:1.6rem;font-weight:900;color:var(--success);margin-bottom:0.5rem;">
+            Order Placed Successfully! 🎉
+        </h1>
+
+        <p style="color:var(--text-muted);margin-bottom:2rem;">
+            Thank you for your order! Your order will be processed soon.
+        </p>
+
+        <div style="background:var(--surface2);border-radius:14px;padding:1.2rem;margin-bottom:1.5rem;">
+            <div class="order-detail">
+                <span style="color:var(--text-muted)">Number of Items</span>
+                <span style="font-weight:700;">@items item@(items == "1" ? "" : "s")</span>
+            </div>
+
+            <div class="order-detail" style="border:none;">
+                <span style="color:var(--text-muted)">Total Amount</span>
+                <span style="font-weight:900;color:var(--accent3);font-size:1.2rem;">@total $</span>
+            </div>
+        </div>
+
+        <div style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:12px;padding:1rem;margin-bottom:1.5rem;">
+            <p style="font-size:0.85rem;color:var(--success);">
+                <i class="fas fa-info-circle"></i>
+                Your purchases were recorded. Your next recommendations will be more accurate!
+            </p>
+        </div>
+
+        <div style="display:flex;gap:0.8rem;">
+            <a href="/Home/Index" class="btn btn-primary" style="text-decoration:none;flex:1;justify-content:center;">
+                <i class="fas fa-home"></i> Home
+            </a>
+
+            <a href="/Home/Products" class="btn btn-secondary" style="text-decoration:none;flex:1;justify-content:center;">
+                <i class="fas fa-store"></i> Shop More
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = Array.from({ length: 80 }, () => ({
+        x: Math.random() * canvas.width,
+        y: -10,
+        r: Math.random() * 8 + 4,
+        d: Math.random() * 80,
+        color: ['#00d4ff', '#7c3aed', '#f59e0b', '#10b981'][Math.floor(Math.random() * 4)],
+        tilt: Math.random() * 10 - 10,
+        tiltAngle: 0,
+        tiltAngleIncrement: Math.random() * 0.07 + 0.05
+    }));
+
+    let frame = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        particles.forEach(particle => {
+            particle.tiltAngle += particle.tiltAngleIncrement;
+            particle.y += 3;
+            particle.tilt = Math.sin(particle.tiltAngle) * 15;
+
+            ctx.beginPath();
+            ctx.fillStyle = particle.color;
+            ctx.roundRect(
+                particle.x + particle.tilt,
+                particle.y,
+                particle.r,
+                particle.r * 1.5,
+                2
+            );
+            ctx.fill();
+
+            if (particle.y > canvas.height) {
+                particle.y = -10;
+                particle.x = Math.random() * canvas.width;
+            }
+        });
+
+        frame++;
+
+        if (frame < 200) {
+            requestAnimationFrame(draw);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    draw();
+    </script>
+}
+
