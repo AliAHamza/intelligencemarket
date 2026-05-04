@@ -4,3 +4,431 @@
     ViewData["Title"] = "Dashboard";
     ViewData["ActivePage"] = "Dashboard";
 }
+
+@section Styles {
+<style>
+    .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.9rem; margin-bottom:1.5rem; }
+    @@media(min-width:768px) { .stats-grid { grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:2rem; } }
+
+    .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:1.3rem; position:relative; overflow:hidden; transition:all .3s; }
+    .stat-card:hover { transform:translateY(-3px); }
+    .stat-card::after { content:''; position:absolute; top:0; right:0; width:70px; height:70px; border-radius:0 16px 0 100%; opacity:.08; }
+
+    .stat-card.blue { border-color:rgba(0,212,255,.2); }
+    .stat-card.blue::after { background:#00d4ff; }
+
+    .stat-card.purple { border-color:rgba(124,58,237,.2); }
+    .stat-card.purple::after { background:#7c3aed; }
+
+    .stat-card.green { border-color:rgba(16,185,129,.2); }
+    .stat-card.green::after { background:#10b981; }
+
+    .stat-card.amber { border-color:rgba(245,158,11,.2); }
+    .stat-card.amber::after { background:#f59e0b; }
+
+    .stat-icon { width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; margin-bottom:.9rem; }
+    .stat-icon.blue { background:rgba(0,212,255,.1); color:#00d4ff; }
+    .stat-icon.purple { background:rgba(124,58,237,.1); color:#7c3aed; }
+    .stat-icon.green { background:rgba(16,185,129,.1); color:#10b981; }
+    .stat-icon.amber { background:rgba(245,158,11,.1); color:#f59e0b; }
+
+    .stat-value { font-size:1.9rem; font-weight:900; line-height:1; margin-bottom:3px; }
+    .stat-label { color:var(--text-muted); font-size:.82rem; }
+
+    .stat-card.blue .stat-value { color:#00d4ff; }
+    .stat-card.purple .stat-value { color:#7c3aed; }
+    .stat-card.green .stat-value { color:#10b981; }
+    .stat-card.amber .stat-value { color:#f59e0b; }
+
+    .content-grid { display:grid; grid-template-columns:1fr; gap:1.2rem; margin-bottom:2rem; }
+    @@media(min-width:960px) { .content-grid { grid-template-columns:1fr 300px; gap:1.5rem; } }
+
+    .ga-badge {
+        display:inline-flex;
+        align-items:center;
+        gap:6px;
+        background:linear-gradient(135deg,rgba(0,212,255,.1),rgba(124,58,237,.1));
+        border:1px solid rgba(0,212,255,.2);
+        color:var(--accent);
+        font-size:.75rem;
+        font-weight:700;
+        padding:4px 12px;
+        border-radius:50px;
+    }
+
+    .ga-dot {
+        width:6px;
+        height:6px;
+        border-radius:50%;
+        background:var(--accent);
+        animation:blink 1s ease-in-out infinite;
+    }
+
+    @@keyframes blink {
+        0%,100% { opacity:1; }
+        50% { opacity:.3; }
+    }
+
+    .product-card {
+        background:var(--surface);
+        border:1px solid var(--border);
+        border-radius:16px;
+        overflow:hidden;
+        transition:all .3s;
+    }
+
+    .product-card:hover {
+        transform:translateY(-4px);
+        border-color:rgba(0,212,255,.3);
+        box-shadow:0 20px 40px rgba(0,0,0,.3);
+    }
+
+    .product-icon-area {
+        width:100%;
+        height:140px;
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        justify-content:center;
+        position:relative;
+        gap:6px;
+    }
+
+    .product-icon-area .icon-emoji {
+        font-size:3.5rem;
+        line-height:1;
+    }
+
+    .product-category-badge {
+        position:absolute;
+        top:8px;
+        right:8px;
+        font-size:.65rem;
+        padding:3px 9px;
+        border-radius:50px;
+        font-weight:700;
+        border:1px solid;
+    }
+
+    .product-body { padding:.9rem; }
+    .product-name { font-size:.88rem; font-weight:700; margin-bottom:5px; color:var(--text); }
+    .product-price { font-size:1.05rem; font-weight:900; color:var(--accent3); margin-bottom:6px; }
+    .stars { color:var(--accent3); font-size:.75rem; }
+
+    .product-actions {
+        display:flex;
+        gap:7px;
+        margin-top:9px;
+    }
+
+    .product-actions .btn {
+        flex:1;
+        justify-content:center;
+        font-size:.78rem;
+        padding:7px 10px;
+    }
+
+    .products-grid {
+        display:grid;
+        gap:1rem;
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    @@media(min-width:640px) {
+        .products-grid { grid-template-columns:repeat(3,1fr); }
+    }
+
+    @@media(min-width:1000px) {
+        .products-grid { grid-template-columns:repeat(4,1fr); }
+    }
+
+    @@media(min-width:1200px) {
+        .products-grid { grid-template-columns:repeat(5,1fr); }
+    }
+
+    .recently-viewed {
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+        gap:.7rem;
+    }
+
+    @@media(max-width:480px) {
+        .recently-viewed { grid-template-columns:repeat(2,1fr); }
+    }
+
+    .mini-product {
+        background:var(--surface2);
+        border:1px solid var(--border);
+        border-radius:12px;
+        padding:.8rem;
+        text-align:center;
+        transition:all .2s;
+        text-decoration:none;
+        color:var(--text);
+        display:block;
+    }
+
+    .mini-product:hover {
+        border-color:var(--accent);
+        color:var(--accent);
+        transform:translateY(-2px);
+    }
+
+    .mini-icon { font-size:1.8rem; margin-bottom:4px; }
+    .mini-name { font-size:.7rem; font-weight:600; color:var(--text-muted); margin-bottom:2px; }
+    .mini-price { font-size:.78rem; color:var(--accent3); font-weight:700; }
+
+    .chart-container {
+        position:relative;
+        height:190px;
+    }
+</style>
+}
+
+<div style="margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+    <div>
+        <h1 style="font-size:1.45rem;font-weight:900;">
+            Welcome,
+            <span style="color:var(--accent)">User #@Model.User.UserId</span> 👋
+        </h1>
+
+        <p style="color:var(--text-muted);font-size:.87rem;margin-top:4px;">
+            <i class="fas fa-map-marker-alt"></i> @(Model.User.Country ?? "Not specified")
+            &nbsp;|&nbsp;
+            <i class="fas fa-birthday-cake"></i> @(Model.User.Age.HasValue ? Model.User.Age.ToString() : "—") years old
+        </p>
+    </div>
+
+    <div class="ga-badge">
+        <div class="ga-dot"></div>
+        <span>10 personalized recommendations ready</span>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card blue">
+        <div class="stat-icon blue">
+            <i class="fas fa-eye"></i>
+        </div>
+        <div class="stat-value">@Model.TotalViewed</div>
+        <div class="stat-label">Products viewed</div>
+    </div>
+
+    <div class="stat-card purple">
+        <div class="stat-icon purple">
+            <i class="fas fa-hand-pointer"></i>
+        </div>
+        <div class="stat-value">@Model.TotalClicked</div>
+        <div class="stat-label">Products clicked</div>
+    </div>
+
+    <div class="stat-card green">
+        <div class="stat-icon green">
+            <i class="fas fa-shopping-bag"></i>
+        </div>
+        <div class="stat-value">@Model.TotalPurchased</div>
+        <div class="stat-label">Products purchased</div>
+    </div>
+
+    <div class="stat-card amber">
+        <div class="stat-icon amber">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-value">@Model.AverageRating</div>
+        <div class="stat-label">Average rating</div>
+    </div>
+</div>
+
+<div class="content-grid">
+    <div>
+        <div class="section-header">
+            <i class="fas fa-dna" style="color:var(--accent)"></i>
+            <h2>Your Personalized Recommendations</h2>
+            <span class="section-badge">Smart Recommendations</span>
+            <div class="divider"></div>
+        </div>
+
+        @if (!Model.Recommendations.Any())
+        {
+            <div class="card" style="text-align:center;padding:3rem;color:var(--text-muted)">
+                <div style="font-size:3rem;margin-bottom:1rem;">🤖</div>
+
+                <p>Browse some products to let the algorithm improve your recommendations!</p>
+
+                <a href="/Home/Products" class="btn btn-primary" style="margin-top:1rem;text-decoration:none">
+                    <i class="fas fa-store"></i> Browse Products
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="products-grid">
+                @foreach (var item in Model.Recommendations)
+                {
+                    var color = item.CategoryColor;
+
+                    <div class="product-card">
+                        <div class="product-icon-area" style="background:linear-gradient(135deg,@(color)18,@(color)30);">
+                            <div class="icon-emoji">@item.CategoryIcon</div>
+
+                            <span class="product-category-badge"
+                                  style="background:@(color)20;border-color:@(color)50;color:@color;">
+                                @(item.Product.Category ?? "—")
+                            </span>
+                        </div>
+
+                        <div class="product-body">
+                            <div class="product-name">
+                                Product #@item.Product.ProductId
+                            </div>
+
+                            <div class="product-price">
+                                @(item.Product.Price?.ToString("F0") ?? "0") $
+                            </div>
+
+                            <div class="stars">
+                                @for (int s = 1; s <= 5; s++)
+                                {
+                                    <i class="@(s <= item.AverageRating ? "fas" : "far") fa-star"></i>
+                                }
+
+                                <span style="color:var(--text-muted);font-size:.72rem;">
+                                    (@item.AverageRating)
+                                </span>
+                            </div>
+
+                            <div class="product-actions">
+                                <a href="/Home/ProductDetail/@item.Product.ProductId"
+                                   class="btn btn-secondary"
+                                   style="text-decoration:none;flex:0 0 auto;padding:7px 10px;"
+                                   title="View product">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+
+                                <button class="btn btn-primary" onclick="addToCart(@item.Product.ProductId,this)" type="button">
+                                    <i class="fas fa-cart-plus"></i> Add
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (Model.RecentlyViewed.Any())
+        {
+            <div style="margin-top:2rem;">
+                <div class="section-header">
+                    <i class="fas fa-history" style="color:var(--accent3)"></i>
+                    <h2>Recently Viewed</h2>
+                    <div class="divider"></div>
+                </div>
+
+                <div class="recently-viewed">
+                    @foreach (var product in Model.RecentlyViewed)
+                    {
+                        <a href="/Home/ProductDetail/@product.ProductId" class="mini-product">
+                            <div class="mini-icon">@CategoryHelper.GetIcon(product.Category)</div>
+                            <div class="mini-name">@(product.Category ?? "—")</div>
+                            <div class="mini-price">@(product.Price?.ToString("F0") ?? "0") $</div>
+                        </a>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+        <div class="card">
+            <div style="font-size:.88rem;font-weight:700;margin-bottom:1rem;color:var(--text-muted);">
+                <i class="fas fa-chart-pie" style="color:var(--accent)"></i> Your Activity
+            </div>
+
+            <div class="chart-container">
+                <canvas id="activityChart"></canvas>
+            </div>
+        </div>
+
+        @if (Model.CategoryStats.Any())
+        {
+            <div class="card">
+                <div style="font-size:.88rem;font-weight:700;margin-bottom:1rem;color:var(--text-muted);">
+                    <i class="fas fa-tags" style="color:var(--accent2)"></i> Favorite Categories
+                </div>
+
+                @foreach (var cat in Model.CategoryStats)
+                {
+                    var max = Model.CategoryStats.Max(c => c.Count);
+                    var pct = max > 0 ? (cat.Count * 100 / max) : 0;
+                    var catColor = CategoryHelper.GetColor(cat.Category);
+
+                    <div style="margin-bottom:.8rem;">
+                        <div style="display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:3px;align-items:center;">
+                            <span>@CategoryHelper.GetIcon(cat.Category) @cat.Category</span>
+                            <span style="color:@catColor;font-weight:700;">@cat.Count</span>
+                        </div>
+
+                        <div style="height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+                            <div style="height:100%;width:@pct%;background:@catColor;border-radius:3px;transition:width 1s;"></div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="card" style="display:flex;flex-direction:column;gap:.6rem;">
+            <a href="/Home/Products" class="btn btn-primary" style="justify-content:center;text-decoration:none;">
+                <i class="fas fa-store"></i> Browse Products
+            </a>
+
+            <a href="/Home/Cart" class="btn btn-secondary" style="justify-content:center;text-decoration:none;">
+                <i class="fas fa-shopping-cart"></i> Cart
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+<script>
+new Chart(document.getElementById('activityChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+        labels: ['Viewed', 'Clicked', 'Purchased'],
+        datasets: [{
+            data: [@Model.TotalViewed, @Model.TotalClicked, @Model.TotalPurchased],
+            backgroundColor: [
+                'rgba(0,212,255,.7)',
+                'rgba(124,58,237,.7)',
+                'rgba(16,185,129,.7)'
+            ],
+            borderColor: [
+                '#00d4ff',
+                '#7c3aed',
+                '#10b981'
+            ],
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#94a3b8',
+                    font: {
+                        family: 'Segoe UI',
+                        size: 11
+                    },
+                    padding: 10
+                }
+            }
+        }
+    }
+});
+</script>
+}
