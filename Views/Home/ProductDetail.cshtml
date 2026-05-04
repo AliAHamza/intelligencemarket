@@ -5,3 +5,172 @@
     ViewData["ActivePage"] = "Products";
     var color = Model.CategoryColor;
 }
+
+@section Styles {
+<style>
+    .detail-grid { display:grid; grid-template-columns:1fr; gap:1.5rem; margin-bottom:1.5rem; }
+    @@media(min-width:768px) { .detail-grid { grid-template-columns:320px 1fr; gap:2rem; } }
+
+    .product-icon-large {
+        border-radius:20px; height:280px;
+        display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px;
+        border:1px solid @(color)40;
+    }
+    .icon-big { font-size:7rem; line-height:1; }
+    .category-tag-large {
+        display:inline-flex; align-items:center; gap:6px;
+        padding:6px 16px; border-radius:50px; font-size:.85rem; font-weight:700;
+        border:1px solid @(color)50;
+    }
+    @@media(min-width:768px) { .product-icon-large { height:320px; } }
+
+    .product-title { font-size:1.5rem; font-weight:900; margin-bottom:.5rem; }
+    .product-big-price { font-size:2rem; font-weight:900; color:var(--accent3); margin:1rem 0; }
+
+    .stats-row { display:flex; gap:.8rem; margin:1rem 0; flex-wrap:wrap; }
+    .stat-mini { flex:1; min-width:80px; background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:.8rem; text-align:center; }
+    .stat-mini .val { font-size:1.3rem; font-weight:900; }
+    .stat-mini .lbl { font-size:.7rem; color:var(--text-muted); margin-top:2px; }
+
+    .rating-stars { display:flex; gap:6px; margin:1rem 0; }
+    .star-btn { font-size:1.6rem; cursor:pointer; color:var(--border); transition:all .15s; background:none; border:none; }
+    .star-btn.active, .star-btn:hover { color:var(--accent3); transform:scale(1.15); }
+
+    .action-row { display:flex; gap:.8rem; margin-top:1.5rem; flex-wrap:wrap; }
+    .action-row .btn { flex:1; justify-content:center; min-width:130px; }
+
+    .purchased-badge {
+        display:inline-flex; align-items:center; gap:6px;
+        background:rgba(16,185,129,.1);
+        border:1px solid rgba(16,185,129,.3);
+        color:var(--success);
+        padding:6px 14px;
+        border-radius:50px;
+        font-size:.85rem;
+        font-weight:700;
+    }
+</style>
+}
+
+<div style="margin-bottom:1.5rem;">
+    <a href="/Home/Products" class="btn btn-secondary" style="text-decoration:none;">
+        <i class="fas fa-arrow-left"></i> Back to Products
+    </a>
+</div>
+
+<div class="detail-grid">
+    <!-- Icon Area -->
+    <div class="product-icon-large" style="background:linear-gradient(135deg,@(color)15,@(color)28);">
+        <div class="icon-big">@Model.CategoryIcon</div>
+        <div class="category-tag-large" style="background:@(color)20;color:@color;">
+            @(Model.Product.Category ?? "—")
+        </div>
+        <div style="font-size:.8rem;color:var(--text-muted);">
+            Product #@Model.Product.ProductId
+        </div>
+    </div>
+
+    <!-- Info -->
+    <div class="card" style="padding:1.8rem;">
+        <h1 class="product-title">Product #@Model.Product.ProductId</h1>
+
+        <div style="display:inline-flex;align-items:center;gap:6px;background:@(color)15;border:1px solid @(color)35;color:@color;padding:4px 12px;border-radius:50px;font-size:.82rem;font-weight:700;margin-bottom:.8rem;">
+            @Model.CategoryIcon @(Model.Product.Category ?? "—")
+        </div>
+
+        <div class="stars" style="font-size:1.1rem;">
+            @for (int s = 1; s <= 5; s++)
+            {
+                <i class="@(s <= Model.AverageRating ? "fas" : "far") fa-star"></i>
+            }
+            <span style="color:var(--text-muted);font-size:.9rem;margin-left:8px;">
+                @Model.AverageRating / 5
+            </span>
+        </div>
+
+        <div class="product-big-price">@(Model.Product.Price?.ToString("F2") ?? "0.00") $</div>
+
+        <div class="stats-row">
+            <div class="stat-mini">
+                <div class="val" style="color:var(--accent)">@Model.TotalViews</div>
+                <div class="lbl">Views</div>
+            </div>
+
+            <div class="stat-mini">
+                <div class="val" style="color:var(--success)">@Model.TotalPurchases</div>
+                <div class="lbl">Purchases</div>
+            </div>
+
+            <div class="stat-mini">
+                <div class="val" style="color:var(--accent3)">@Model.AverageRating</div>
+                <div class="lbl">Average Rating</div>
+            </div>
+        </div>
+
+        @if (Model.UserPurchased)
+        {
+            <div class="purchased-badge">
+                <i class="fas fa-check-circle"></i> You purchased this product before
+            </div>
+        }
+
+        <div style="margin-top:1rem;">
+            <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:8px;font-weight:700;">
+                Rate this product:
+            </p>
+
+            <div class="rating-stars" id="ratingStars">
+                @for (int s = 1; s <= 5; s++)
+                {
+                    <button class="star-btn @(s <= Model.UserRating ? "active" : "")"
+                            onclick="rateProduct(@s)"
+                            data-val="@s"
+                            type="button">
+                        ★
+                    </button>
+                }
+            </div>
+
+            <span id="ratingMsg" style="font-size:.8rem;color:var(--success);display:none;">
+                <i class="fas fa-check"></i> Rating saved!
+            </span>
+        </div>
+
+        <div class="action-row">
+            <button class="btn btn-primary" onclick="addToCart(@Model.Product.ProductId,this)" type="button">
+                <i class="fas fa-cart-plus"></i> Add to Cart
+            </button>
+
+            <a href="/Home/Products" class="btn btn-secondary" style="text-decoration:none;">
+                <i class="fas fa-store"></i> Browse More
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+async function rateProduct(val) {
+    document.querySelectorAll('.star-btn').forEach((star, index) => {
+        star.classList.toggle('active', index < val);
+    });
+
+    const fd = new FormData();
+    fd.append('productId', '@Model.Product.ProductId');
+    fd.append('rating', val);
+    fd.append('__RequestVerificationToken', document.querySelector('input[name=__RequestVerificationToken]')?.value || '');
+
+    const response = await fetch('/Home/Rate', {
+        method: 'POST',
+        body: fd
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+        document.getElementById('ratingMsg').style.display = 'inline';
+        showToast('⭐ Rating saved!');
+    }
+}
+</script>
+}
