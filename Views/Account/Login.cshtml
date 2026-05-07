@@ -3,5 +3,280 @@
     Layout = null;
 }
 <!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Intelligence Market</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #0a0e1a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* animated background */
+        .bg-orbs {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .orb-1 { width: 500px; height: 500px; background: #00d4ff; top: -200px; right: -100px; animation-delay: 0s; }
+        .orb-2 { width: 400px; height: 400px; background: #7c3aed; bottom: -150px; left: -100px; animation-delay: 3s; }
+        .orb-3 { width: 300px; height: 300px; background: #f59e0b; top: 50%; left: 50%; animation-delay: 6s; }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        /* Grid */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: 0;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 420px;
+            padding: 1rem;
+        }
+
+        .login-card {
+            background: rgba(17,24,39,0.9);
+            border: 1px solid #1e2d45;
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 60px rgba(0,212,255,0.06);
+            animation: slideUp 0.6s ease;
+        }
+
+        @@keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo-area {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, #00d4ff, #7c3aed);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 40px rgba(0,212,255,0.3);
+        }
+
+        @@keyframes pulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(0,212,255,0.3); }
+            50% { box-shadow: 0 0 60px rgba(0,212,255,0.5); }
+        }
+
+        .logo-area h1 {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #00d4ff;
+        }
+
+        .logo-area h1 span { color: #e2e8f0; }
+
+        .logo-area p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 44px 14px 16px;
+            background: #0a0e1a;
+            border: 1px solid #1e2d45;
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+        }
+
+        .form-input::placeholder { color: #334155; letter-spacing: 0; font-weight: 400; }
+
+        .error-msg {
+            background: rgba(239,68,68,0.1);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: #fca5a5;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 12px;
+            color: #0a0e1a;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(0,212,255,0.4);
+        }
+
+        .hint {
+            text-align: center;
+            color: #334155;
+            font-size: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .hint span { color: #00d4ff; font-weight: 700; }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .feature {
+            text-align: center;
+            color: #475569;
+            font-size: 0.75rem;
+        }
+
+        .feature i {
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 4px;
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fas fa-robot"></i></div>
+                <h1>Intelligence <span>Market</span></h1>
+                <p>Smart Recommendation system</p>
+            </div>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <div class="error-msg"><i class="fas fa-exclamation-circle"></i> @error.ErrorMessage</div>
+                }
+            }
+
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <label class="form-label">User ID</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-hashtag input-icon"></i>
+                    <input type="number" name="UserId" class="form-input"
+                           placeholder="Enter your ID here..." min="1" required autofocus />
+                </div>
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Enter the Store
+                </button>
+            </form>
+
+            <div class="features">
+                <div class="feature"><i class="fas fa-dna"></i>Contemporary Store</div>
+                <div class="feature"><i class="fas fa-brain"></i>Smart Recommendations</div>
+                <div class="feature"><i class="fas fa-sync"></i>Auto Update</div>
+            </div>
+
+            <div class="hint">Enter a User ID from 1 to 1000</div>
+        </div>
+    </div>
+</body>
 
 </html>
